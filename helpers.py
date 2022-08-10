@@ -86,9 +86,11 @@ def is_correct_channel_for_pigepeeking(message, peek_emoji_dic):
 def user_is_pigepeeking(message, peek_emoji_dic):
     pigepeek_type = message.channel.name
 
-    print(message.content.strip().lower())
-    print(peek_emoji_dic[pigepeek_type])
-    if message.content.strip().lower() in peek_emoji_dic[pigepeek_type]:
-        return True
+    if isinstance(peek_emoji_dic[pigepeek_type], list):
+        if message.content.strip().lower() in peek_emoji_dic[pigepeek_type]:
+            return True
+    elif isinstance(peek_emoji_dic[pigepeek_type], str):
+        if message.content.strip().lower() == peek_emoji_dic[pigepeek_type]:
+            return True
     return False
 
