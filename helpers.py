@@ -1,5 +1,7 @@
 # helpers.py
 # abstraction from main
+import csv
+
 from random import randint
 
 # Lists and Dictionaries
@@ -93,4 +95,40 @@ def user_is_pigepeeking(message, peek_emoji_dic):
         if message.content.strip().lower() == peek_emoji_dic[pigepeek_type]:
             return True
     return False
+
+
+# Adds one to the users pigepeek amount
+def increase_pigepeek_counter(user_id):
+    count = count_pigepeeks(user_id)
+
+    # Add new user
+    if count is None:
+        with open('pigepeek_counter.csv', 'w', newline='') as f:
+            fieldnames = ['user_id', 'pigepeek_count']
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+
+            writer.writeheader()
+            writer.writerow({'user_id': user_id, 'pigepeek_count': 1})
+        return
+
+    # Update existing user
+    count = int(count) + 1
+    with open('pigepeek_counter.csv', 'w', newline='') as f:
+        fieldnames = ['user_id', 'pigepeek_count']
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+
+        writer.writeheader()
+        writer.writerow({'user_id': user_id, 'pigepeek_count': count})
+    return
+
+
+def count_pigepeeks(user_id):
+    count = None
+    with open('pigepeek_counter.csv', newline='') as f:
+        reader = csv.DictReader(f)
+
+        for row in reader:
+            if str(row['user_id']) == str(user_id):
+                count = row['pigepeek_count']
+    return count
 
