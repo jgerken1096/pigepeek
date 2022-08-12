@@ -1,6 +1,7 @@
 # helpers.py
 # abstraction from main
 import csv
+import pandas as pd
 
 from random import randint
 
@@ -9,6 +10,7 @@ from random import randint
 # Pigepeek Main Server Emojis
 # Potentially could instead make the bot list all the server emojis id's and store them in a list
 pigepeek_emoji_ids = [
+    '<:pigepeek:940345904664305675>',
     '<:pigepeek:883177483204177960>',
     '<:pigepeek:888604853402755122>',
     '<:pigepeek:888604861548072960>',
@@ -97,38 +99,40 @@ def user_is_pigepeeking(message, peek_emoji_dic):
     return False
 
 
-# Adds one to the users pigepeek amount
-def increase_pigepeek_counter(user_id):
-    count = count_pigepeeks(user_id)
+# Increases the users pigepeeks by one
+def increase_pigepeek_count(user_id):
+    df = pd.read_csv("pigepeek_counter.csv")
 
-    # Add new user
-    if count is None:
-        with open('pigepeek_counter.csv', 'w', newline='') as f:
-            fieldnames = ['user_id', 'pigepeek_count']
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
+    if user_id not in df.user_id.values:
+        # New User
+        df_new_user = pd.DataFrame(data=[[user_id, 1]],
+                                   columns=['user_id', 'pigepeek_count']).convert_dtypes(convert_integer=True)
+        df = pd.concat([df, df_new_user])
+        df.to_csv(r'pigepeek_counter.csv', index=False)
+    else:
+        # Existing User
+        query = df.where(df.user_id == user_id).convert_dtypes(convert_integer=True).pigepeek_count
 
-            writer.writeheader()
-            writer.writerow({'user_id': user_id, 'pigepeek_count': 1})
+        df.update(query + 1)
+        df.to_csv(r'pigepeek_counter.csv', index=False)
+
+
+# Function called at bot startup
+def verify_and_create_csv_file():
+    # If file has no header, add file header
+    try:
+        df = pd.read_csv("pigepeek_counter.csv")
+    except (pd.errors.EmptyDataError, FileNotFoundError):
+        print('File was empty. New CSV file created')
+        df = pd.DataFrame(columns=['user_id', 'pigepeek_count'])
+        df.to_csv(r'pigepeek_counter.csv', index=False)
         return
 
-    # Update existing user
-    count = int(count) + 1
-    with open('pigepeek_counter.csv', 'w', newline='') as f:
-        fieldnames = ['user_id', 'pigepeek_count']
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-
-        writer.writeheader()
-        writer.writerow({'user_id': user_id, 'pigepeek_count': count})
-    return
-
-
-def count_pigepeeks(user_id):
-    count = None
-    with open('pigepeek_counter.csv', newline='') as f:
-        reader = csv.DictReader(f)
-
-        for row in reader:
-            if str(row['user_id']) == str(user_id):
-                count = row['pigepeek_count']
-    return count
-
+    # Confirming columns are appropriately named
+    df = pd.read_csv("pigepeek_counter.csv")
+    columns = list(df.columns)
+    if columns != ['user_id', 'pigepeek_count']:
+        print('Header was changed. Rewriting header')
+        df = pd.DataFrame(columns=['user_id', 'pigepeek_count'])
+        df.to_csv(r'pigepeek_counter.csv', index=False)
+        return

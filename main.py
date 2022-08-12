@@ -16,6 +16,7 @@ client = discord.Client()
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
+    verify_and_create_csv_file()
 
 
 @client.event
@@ -35,7 +36,7 @@ async def on_message(message):
     # Handles deletion of improper messages and processes hidden gems (easter eggs)
     if is_correct_channel_for_pigepeeking(message, pigepeek_emoji_ids_dic):
         if user_is_pigepeeking(message, pigepeek_emoji_ids_dic):
-            increase_pigepeek_counter(message.author.id)
+            increase_pigepeek_count(message.author.id)
             await try_hidden_gem(message, pigepeek_emoji_ids_dic, 3)
         else:
             await delete_wrong_message(message, pigepeek_emoji_ids_dic)
