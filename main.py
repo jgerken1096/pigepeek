@@ -17,6 +17,12 @@ client = discord.Client()
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
     verify_and_create_csv_file()
+    # check date
+
+    channels = client.get_all_channels()
+
+
+    # check_to_process_archives(channels)
 
 
 @client.event
