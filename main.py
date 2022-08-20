@@ -17,9 +17,9 @@ async def on_ready():
     print(f'{client.user} has connected to Discord!')
     verify_and_create_csv_file()
 
-    while True:
-        await wait_for_new_day(discord)
-        await process_archives(client)
+    #while True:
+        #await wait_for_new_day(discord)
+        #await process_archives(client)
 
 
 @client.event
@@ -39,10 +39,13 @@ async def on_message(message):
     # Handles deletion of improper messages and processes hidden gems (easter eggs)
     if is_correct_channel_for_pigepeeking(message):
         if user_is_pigepeeking(message):
-            increase_pigepeek_count(message.author.id)
-            await try_hidden_gem(message, 3)
+            if not await user_already_pigepeeked(message):
+                increase_pigepeek_count(message.author.id)
+                await try_hidden_gem(message, 3)
+            else:
+                await delete_wrong_message(message)
         else:
-            await delete_wrong_message(message,)
+            await delete_wrong_message(message)
     return
 
 
