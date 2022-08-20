@@ -4,12 +4,14 @@ import discord
 
 from dotenv import load_dotenv
 from helpers import *
-from iterables import pigepeek_emoji_ids_dic
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-client = discord.Client()
+intents = discord.Intents.default()
+intents.messages = True
+intents.members = True
+client = discord.Client(intents=intents)
 
 
 @client.event
@@ -24,10 +26,14 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member):
+    # Direct messages
     await member.create_dm()
     await member.dm_channel.send(
-        f'Welcome to :pigepeek:, {member.name}. :)'
+        f'Welcome to :pigepeek:, {member.name} :)'
     )
+
+    # Role management
+    await give_pigepeek_role(member)
 
 
 @client.event
@@ -36,7 +42,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    # Handles deletion of improper messages and processes hidden gems (easter eggs)
+    # Handles deletion of improper messages, processes hidden gems (easter eggs) and disallows back-to-back pigepeeking
     if is_correct_channel_for_pigepeeking(message):
         if user_is_pigepeeking(message):
             if not await user_already_pigepeeked(message):

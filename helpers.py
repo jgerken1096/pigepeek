@@ -1,7 +1,10 @@
 # helpers.py
 # abstraction from main
+import sys
 import time
 import datetime
+
+import discord
 import pause as pause
 import pandas as pd
 
@@ -180,6 +183,26 @@ async def wait_for_new_day(discord):
 
     pause.until(midnight)
     return
+
+
+async def give_pigepeek_role(member):
+    roles = member.guild.roles
+    pigepeek_default_role = None
+    for role in roles:
+        if role.name == 'pigepeek':
+            # Future proofing
+            if not role.permissions.administrator:
+                if not pigepeek_default_role:
+                    pigepeek_default_role = role
+                else:
+                    print("More than one default pigepeek role found", file=sys.stderr)
+                    return
+
+    if not pigepeek_default_role:
+        print("Default pigepeek role could not be found", file=sys.stderr)
+        return
+
+    await member.add_roles(pigepeek_default_role, reason='joined server')
 
 
 class MyDictionary(dict):
