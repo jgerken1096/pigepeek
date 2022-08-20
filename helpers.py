@@ -1,53 +1,18 @@
 # helpers.py
 # abstraction from main
-import pandas as pd
 import time
+import datetime
 
+import pause as pause
+import pytz
+
+
+import pandas as pd
 from random import randint
 
-# Lists and Dictionaries
-# Pigepeek Test Emoji '<:pigepeek:940345904664305675>'
-# Pigepeek Main Server Emojis
-# Potentially could instead make the bot list all the server emojis id's and store them in a list
-pigepeek_emoji_ids = [
-    '<:pigepeek:940345904664305675>',
-    '<:pigepeek:883177483204177960>',
-    '<:pigepeek:888604853402755122>',
-    '<:pigepeek:888604861548072960>',
-    '<:pigepeek:888604870209331232>',
-    '<:pigepeek:888604876601446421>',
-    '<:pigepeek:888604883266187305>',
-    '<:pigepeek:888604888764915782>',
-    '<:pigepeek:888604897229037578>',
-    '<:pigepeek:888604903969284147>',
-    '<:pigepeek:888604909233131561>',
-    '<:pigepeek:888604915377786891>',
-    '<:pigepeek:888604921811845162>',
-    '<:pigepeek:888604926975045642>',
-    '<:pigepeek:888604933073535017>',
-    '<:pigepeek:888604940455534615>',
-    '<:pigepeek:888604944964415499>',
-    '<:pigepeek:888604949297107005>',
-    '<:pigepeek:888604957404708875>',
-    '<:pigepeek:888604964119797821>',
-    '<:pigepeek:888604966590251049>',
-    '<:pigepeek:888604971640172614>',
-    '<:pigepeek:888604976782389248>',
-    '<:pigepeek:888604982989971456>',
-    '<:pigepeek:888604987112980480>',
-    '<:pigepeek:888604990787190875>',
-    '<:pigepeek:888604995728060426>',
-    '<:pigepeek:860545545805234187>',
-    '<:pigepeek:974019444009476197>',
-    '<:pigepeek:993763656288436304>'
-]
+import pytz
 
-pigepeek_emoji_ids_dic = {
-    "pigepeek": pigepeek_emoji_ids,
-    "festivepeek": "<:festivepeek:916746661324271646>",
-    "spookepeek": '<:spookepeek:899747028379250718>',
-    "luvepeek": "<:luvepeek:1006728505368772721>"
-}
+from iterables import *
 
 
 # Handles deletion of improper messages
@@ -138,81 +103,80 @@ def verify_and_create_csv_file():
         return
 
 
-# Day, Month
-seasonal_dates = {
-    'festivepeek': {
-        'start': {'day': '6', 'month': '12'},
-        'end': {'day': '26', 'month': '12'}},
-    'spookepeek': {
-        'start': {'day': '17', 'month': '10'},
-        'end': {'day': '1', 'month': '11'}},
-    'luvepeek': {
-        'start': {'day': '7', 'month': '2'},
-        'end': {'day': '15', 'month': '2'}}
-}
-
-# Test: 940331847618007090, 1007872442884178021
-# Main: 883177197832126565, 889587732651855972
-archive_ids = {
-    'pigepeek': 940331847618007090,
-    'pigepeek_archive': 1007872442884178021
-    # 'pigepeek': 883177197832126565,
-    # 'pigepeek_archive': 889587732651855972
-}
-
-
-def check_to_process_archives(channels):
+# Should call this at the start of every day, midnight
+# Checks if current date is within pigepeek event season. Checks month, then day
+def find_ongoing_celebrations():
     # Check between certain times of the year. If not, return
     localtime = time.localtime(time.time())
     day = localtime.tm_mday
     month = localtime.tm_mon
-    day = '20'
-    month = '12'
+    # Debug test days
+    # day = '14'
+    # month = '12'
     # pigepeek celebrations currently active
     celebrations = []
 
-    # Checks if current date is within pigepeek event season. Checks month, then day
     for pigepeek_type in seasonal_dates.keys():
         if month == seasonal_dates[pigepeek_type]['start']['month'] or \
                 month == seasonal_dates[pigepeek_type]['end']['month']:
-            print('within the right month!')
-            for _pigepeek_type in seasonal_dates.keys():
-                if int(day) in range(int(seasonal_dates[_pigepeek_type]['start']['day']),
-                                     int(seasonal_dates[_pigepeek_type]['end']['day'])):
-                    print('within right days!')
-                    # Cheer the user for the celebration
-                    pigepeek_cheer(_pigepeek_type)
-                    celebrations.append(_pigepeek_type)
-                else:
-                    print('not within right days!')
-        else:
-            print('not within the right month!')
+            if int(day) in range(int(seasonal_dates[pigepeek_type]['start']['day']),
+                                 int(seasonal_dates[pigepeek_type]['end']['day'])):
+                # Cheer the user for the celebration
+                pigepeek_cheer(pigepeek_type)
+                celebrations.append(pigepeek_type)
 
-    print(celebrations)
-    if not celebrations:
-        print('no celebration going on')
-        return
+    return celebrations
 
+
+# Archives and unarchives channels
+async def process_archives(client):
     # Get a list of all channels that contain the name(s) seasonal_dates.keys()
     # Get their ids in a list
-    seasonal_channels = []
-    for channel in channels:
+    celebrations = find_ongoing_celebrations()
+    channels = client.get_all_channels()
+    archive_category_channels = MyDictionary()
+
+    for num_id in archive_ids:
+        archive_category_channels.add(client.get_channel(archive_ids[num_id]).name,
+                                      client.get_channel(archive_ids[num_id]))
+
+    for i, channel in enumerate(channels):
         if channel.name in seasonal_dates.keys():
             if str(channel.type) == 'text':
-                seasonal_channels.append(channel)
-
-    for channel in seasonal_channels:
-        print()
-        #channel.edit(category='pigepeek')
-        # channel.move(category='pigepeek')
-
-    print(seasonal_channels)
-    # print(channels)
-
-
-def check_to_unarchive():
-    print()
+                if channel.name in celebrations:
+                    # Unarchive channel
+                    await channel.move(category=archive_category_channels['pigepeek'],
+                                       sync_permissions=True,
+                                       beginning=True,
+                                       offset=1 + i,
+                                       reason='Seasonal event happening')
+                else:
+                    # Archive channel
+                    if channel.category == archive_category_channels['pigepeek']:
+                        await channel.move(category=archive_category_channels['pigepeek archive'],
+                                           sync_permissions=True,
+                                           beginning=True,
+                                           offset=i,
+                                           reason='Seasonal event not happening')
 
 
 def pigepeek_cheer(peek_type: str):
     print('♥ ~Celebrating ' + peek_type + '~ ♥')
+
+
+# Checks if it's the start of a new day
+async def wait_for_new_day(discord):
+    tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
+
+    midnight = datetime.datetime(
+        year=tomorrow.year, month=tomorrow.month, day=tomorrow.day,
+        hour=0, minute=0, microsecond=0)
+
+    pause.until(midnight)
+    return
+
+
+class MyDictionary(dict):
+    # Function to add key:value
+    def add(self, key, value):
+        self[key] = value
