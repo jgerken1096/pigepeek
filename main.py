@@ -1,4 +1,4 @@
-# MAIN.py / BOT
+# MAIN.py
 import os
 import discord
 
@@ -37,13 +37,12 @@ async def on_message(message):
         return
 
     # Handles deletion of improper messages and processes hidden gems (easter eggs)
-    if is_correct_channel_for_pigepeeking(message, pigepeek_emoji_ids_dic):
-        if user_is_pigepeeking(message, pigepeek_emoji_ids_dic):
+    if is_correct_channel_for_pigepeeking(message):
+        if user_is_pigepeeking(message):
             increase_pigepeek_count(message.author.id)
-            await try_hidden_gem(message, pigepeek_emoji_ids_dic, 3)
+            await try_hidden_gem(message, 3)
         else:
-            await delete_wrong_message(message, pigepeek_emoji_ids_dic)
-
+            await delete_wrong_message(message,)
     return
 
 

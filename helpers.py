@@ -16,14 +16,14 @@ from iterables import *
 
 
 # Handles deletion of improper messages
-async def delete_wrong_message(message, peek_emoji_dic):
+async def delete_wrong_message(message):
     await message.delete()
     return
 
 
 # Handles hidden gem (Easter egg) to pigepeek back to the user
 # Chance the denominator ( 1 / chance )
-async def try_hidden_gem(message, peek_emoji_dic, chance):
+async def try_hidden_gem(message, chance):
     pigepeek_type = message.channel.name
 
     # Hidden gem (easter egg) to pigepeek back to the user
@@ -34,32 +34,32 @@ async def try_hidden_gem(message, peek_emoji_dic, chance):
         return
 
     # Str = only one type of pigepeek id
-    if isinstance(peek_emoji_dic[pigepeek_type], str):
-        await message.channel.send(peek_emoji_dic[pigepeek_type])
+    if isinstance(pigepeek_emoji_ids_dic[pigepeek_type], str):
+        await message.channel.send(pigepeek_emoji_ids_dic[pigepeek_type])
         return
-    elif isinstance(peek_emoji_dic[pigepeek_type], list):
-        list_random_pos = randint(0, (len(peek_emoji_dic[pigepeek_type]) - 1))
-        await message.channel.send(peek_emoji_dic[pigepeek_type][list_random_pos])
+    elif isinstance(pigepeek_emoji_ids_dic[pigepeek_type], list):
+        list_random_pos = randint(0, (len(pigepeek_emoji_ids_dic[pigepeek_type]) - 1))
+        await message.channel.send(pigepeek_emoji_ids_dic[pigepeek_type][list_random_pos])
         return
 
     return
 
 
 # Checks if the user can pigepeek in this channel
-def is_correct_channel_for_pigepeeking(message, peek_emoji_dic):
-    if message.channel.name in peek_emoji_dic.keys():
+def is_correct_channel_for_pigepeeking(message):
+    if message.channel.name in pigepeek_emoji_ids_dic.keys():
         return True
     return False
 
 
-def user_is_pigepeeking(message, peek_emoji_dic):
+def user_is_pigepeeking(message):
     pigepeek_type = message.channel.name
 
-    if isinstance(peek_emoji_dic[pigepeek_type], list):
-        if message.content.strip().lower() in peek_emoji_dic[pigepeek_type]:
+    if isinstance(pigepeek_emoji_ids_dic[pigepeek_type], list):
+        if message.content.strip().lower() in pigepeek_emoji_ids_dic[pigepeek_type]:
             return True
-    elif isinstance(peek_emoji_dic[pigepeek_type], str):
-        if message.content.strip().lower() == peek_emoji_dic[pigepeek_type]:
+    elif isinstance(pigepeek_emoji_ids_dic[pigepeek_type], str):
+        if message.content.strip().lower() == pigepeek_emoji_ids_dic[pigepeek_type]:
             return True
     return False
 
