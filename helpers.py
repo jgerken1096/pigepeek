@@ -1,5 +1,6 @@
 # helpers.py
 # abstraction from main
+import asyncio
 import sys
 import time
 import datetime
@@ -8,6 +9,7 @@ import discord
 import pause as pause
 import pandas as pd
 
+from discord.ext import tasks
 from random import randint
 from iterables import *
 
@@ -173,16 +175,15 @@ def pigepeek_cheer(peek_type: str):
     print('♥ ~Celebrating ' + peek_type + '~ ♥')
 
 
-# Checks if it's the start of a new day
-async def wait_for_new_day(discord):
+# Waits until the start of midnight
+async def wait_for_new_day():
     tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
-
     midnight = datetime.datetime(
         year=tomorrow.year, month=tomorrow.month, day=tomorrow.day,
         hour=0, minute=0, microsecond=0)
 
-    pause.until(midnight)
-    return
+    seconds_until_next_day = (midnight - datetime.datetime.now()).total_seconds()
+    await asyncio.sleep(seconds_until_next_day)
 
 
 async def give_pigepeek_role(member):
