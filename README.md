@@ -1,5 +1,7 @@
 # pigepeek
-Bot for pigepeek server
+Bot for discord pigepeek server
+
+Requires a default pigepeeking role named "pigepeek"
 
 Channels must be appropriately named via the emoji keys in helpers.py / pigepeek_emoji_ids_dic.
 An example for a channel name for one using the ":pigepeek:" emoji, would be, "pigepeek"
