@@ -2,17 +2,23 @@
 # abstraction from main
 import time
 import datetime
-
 import pause as pause
-import pytz
-
-
 import pandas as pd
+
 from random import randint
-
-import pytz
-
 from iterables import *
+
+
+# Verifies user is not pigepeeking back-to-back
+async def user_already_pigepeeked(message):
+    # Receiving history for last two messages
+    messages = [message async for message in message.channel.history(limit=2)]
+    current_message_author_id = messages[0].author.id
+    previous_message_author_id = messages[1].author.id
+
+    if current_message_author_id == previous_message_author_id:
+        return True
+    return False
 
 
 # Handles deletion of improper messages
