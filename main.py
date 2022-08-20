@@ -1,11 +1,10 @@
 # MAIN.py / BOT
-
 import os
-
 import discord
 
 from dotenv import load_dotenv
 from helpers import *
+from iterables import pigepeek_emoji_ids_dic
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -17,6 +16,10 @@ client = discord.Client()
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
     verify_and_create_csv_file()
+
+    while True:
+        await wait_for_new_day(discord)
+        await process_archives(client)
 
 
 @client.event
@@ -44,4 +47,5 @@ async def on_message(message):
     return
 
 
-client.run(TOKEN)
+if __name__ == "__main__":
+    client.run(TOKEN)
