@@ -1,2 +1,4 @@
 /.env
 /pigepeek_counter.csv
+/venv/
+/.idea
