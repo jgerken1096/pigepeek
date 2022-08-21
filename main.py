@@ -1,4 +1,5 @@
 # MAIN.py
+import asyncio
 import os
 import discord
 
@@ -19,9 +20,9 @@ async def on_ready():
     print(f'{client.user} has connected to Discord!')
     verify_and_create_csv_file()
 
-    #while True:
-        #await wait_for_new_day(discord)
-        #await process_archives(client)
+    while True:
+        await wait_for_new_day()
+        await process_archives(client)
 
 
 @client.event
