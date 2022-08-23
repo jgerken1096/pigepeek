@@ -1,4 +1,5 @@
 /.env
-/pigepeek_counter.csv
+/emoji_counter.csv
 /venv/
 /.idea
+/config.json
