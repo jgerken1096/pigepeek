@@ -1,6 +1,9 @@
 # pigepeek
 Bot for discord pigepeek server
 
+About:
+The pigepeek server is a server for organizational emoji streaking while promoting positive social environment.
+
 Getting Started Discord Section:
 - Default emoji in config.json must have a discord (non-admin) role to match it, as well as a discord emoji.
 - The concept of this discord role is for design but also for security reasons. Only those with the role can pigepeek, @everyone does not have permission. If the bot is unavaliable for any reason, one can simply revoke the "pigepeek"'s permission to message manually.
