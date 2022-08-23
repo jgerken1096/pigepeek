@@ -25,7 +25,6 @@ The pigepeek server is a server for organizational emoji streaking while promoti
 - Hidden gem chance is the chance that the bot will send an emoji in response to your emoji.
 
 ## Contributions
-If you are interested in contributing to this bot as a user:
-- Please submit any issues that arrive when using the bot as well as suggestions for new features. Suggestions should be placed within issues.
-If you are interested in contributing to this bot as a programmer:
-- Check out the issues and look for one that doesn't look overwelhming. Check for the "good first issue" tag as well. Please make sure to understand current documentation as to not remake already existing code.
+If you're looking to help out with this project:
+- As a user of the bot please submit any issues that arrive when using the bot as well as suggestions for new features. Suggestions should be placed within issues with the tag "suggestion."
+- As a programmer for the bot check out the issues and look for one that doesn't look overwelhming. Check for the "good first issue" tag as well. Please make sure to understand current documentation as to not remake already existing code.
