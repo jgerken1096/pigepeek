@@ -1,10 +1,13 @@
 # MAIN.py
-import asyncio
 import os
 import discord
 
 from dotenv import load_dotenv
-from helpers import *
+
+from py_helpers.csv_helpers import verify_and_create_csv_file
+from py_helpers.time_helpers import wait_for_new_day, process_archives
+from py_helpers.user_helpers import user_already_sent_emoji, delete_wrong_message, try_hidden_gem, \
+    is_correct_channel_for_sending_emoji, user_is_sending_correct_emoji, increase_emoji_count, give_default_emoji_role
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -34,7 +37,7 @@ async def on_member_join(member):
     )
 
     # Role management
-    await give_pigepeek_role(member)
+    await give_default_emoji_role(member)
 
 
 @client.event
@@ -44,11 +47,11 @@ async def on_message(message):
         return
 
     # Handles deletion of improper messages, processes hidden gems (easter eggs) and disallows back-to-back pigepeeking
-    if is_correct_channel_for_pigepeeking(message):
-        if user_is_pigepeeking(message):
-            if not await user_already_pigepeeked(message):
-                increase_pigepeek_count(message.author.id)
-                await try_hidden_gem(message, 3)
+    if is_correct_channel_for_sending_emoji(message):
+        if user_is_sending_correct_emoji(message):
+            if not await user_already_sent_emoji(message):
+                increase_emoji_count(message.author.id)
+                await try_hidden_gem(message)
             else:
                 await delete_wrong_message(message)
         else:
