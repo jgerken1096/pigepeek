@@ -1,0 +1,50 @@
+{
+  "emoji_ids": {
+    "pigepeek": [
+      "<:pigepeek:111111111111111111>",
+      "<:pigepeek:222222222222222222>",
+      "<:pigepeek:333333333333333333>"
+    ],
+    "festivepeek": "<:festivepeek:111111111111111111>",
+    "spookepeek": "<:spookepeek:111111111111111111>",
+    "luvepeek": "<:luvepeek:111111111111111111>"
+  },
+  "seasonal_dates": {
+    "festivepeek": {
+      "start": {
+        "day": "6",
+        "month": "12"
+      },
+      "end": {
+        "day": "26",
+        "month": "12"
+      }
+    },
+    "spookepeek": {
+      "start": {
+        "day": "17",
+        "month": "10"
+      },
+      "end": {
+        "day": "1",
+        "month": "11"
+      }
+    },
+    "luvepeek": {
+      "start": {
+        "day": "7",
+        "month": "2"
+      },
+      "end": {
+        "day": "15",
+        "month": "2"
+      }
+    }
+  },
+  "archive_ids": {
+    "pigepeek": 111111111111111111,
+    "pigepeek_archive": 111111111111111111
+  },
+  "hidden_gem_chance": 3000,
+  "default_emoji_name": "pigepeek"
+}
