@@ -4,10 +4,10 @@ import discord
 
 from dotenv import load_dotenv
 
-from py_helpers.csv_helpers import verify_and_create_csv_file
+from py_helpers.csv_helpers import verify_and_create_csv_file, increase_emoji_count
 from py_helpers.time_helpers import wait_for_new_day, process_archives
 from py_helpers.user_helpers import user_already_sent_emoji, delete_wrong_message, try_hidden_gem, \
-    is_correct_channel_for_sending_emoji, user_is_sending_correct_emoji, increase_emoji_count, give_default_emoji_role
+    is_correct_channel_for_sending_emoji, user_is_sending_correct_emoji, give_default_emoji_role
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')

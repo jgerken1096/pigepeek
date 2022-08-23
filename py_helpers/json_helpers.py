@@ -7,7 +7,7 @@ import sys
 # Request must be list but can hold one or more values
 # Acceptable request names: 'emoji_ids', 'seasonal_dates', 'archive_ids', 'hidden_gem_chance'
 def json_fetch(request: list):
-    with open('../config.json') as json_data:
+    with open('./config.json') as json_data:
         data = json.load(json_data, )
 
     # Checking for inappropriate data in config.json
@@ -26,6 +26,17 @@ def json_fetch(request: list):
             case _:
                 print("Non-default config file components found", file=sys.stderr)
                 return
+
+    # Verifying gem chance integrity
+    try:
+        int(data['hidden_gem_chance'])
+    except ValueError:
+        print("Hidden gem chance must be a number", file=sys.stderr)
+        sys.exit()
+
+    if data['hidden_gem_chance'] < 1:
+        print("Hidden gem chance cannot be below 1", file=sys.stderr)
+        sys.exit()
 
     # If one item in list
     if len(request) == 1:

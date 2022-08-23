@@ -1,6 +1,6 @@
 # user_helpers.py
 # handles user-related functions
-import pandas as pd
+import sys
 
 from random import randint
 from py_helpers.json_helpers import emoji_ids, default_emoji_name, hidden_gem_chance
@@ -31,6 +31,7 @@ async def try_hidden_gem(message):
 
     min_chance = 1
     max_chance = hidden_gem_chance
+
     result_chance = randint(min_chance, max_chance)
     if result_chance != max_chance:
         return
@@ -43,7 +44,6 @@ async def try_hidden_gem(message):
         list_random_pos = randint(0, (len(emoji_ids[emoji_type]) - 1))
         await message.channel.send(emoji_ids[emoji_type][list_random_pos])
         return
-
     return
 
 
@@ -66,24 +66,6 @@ def user_is_sending_correct_emoji(message):
     return False
 
 
-# Increases the user's emoji count by one
-def increase_emoji_count(user_id):
-    df = pd.read_csv("../emoji_counter.csv")
-
-    if user_id not in df.user_id.values:
-        # New User
-        df_new_user = pd.DataFrame(data=[[user_id, 1]],
-                                   columns=['user_id', 'emoji_count']).convert_dtypes(convert_integer=True)
-        df = pd.concat([df, df_new_user])
-        df.to_csv(r'emoji_counter.csv', index=False)
-    else:
-        # Existing User
-        query = df.where(df.user_id == user_id).convert_dtypes(convert_integer=True).emoji_count
-
-        df.update(query + 1)
-        df.to_csv(r'emoji_counter.csv', index=False)
-
-
 async def give_default_emoji_role(member):
     roles = member.guild.roles
     default_role = None
@@ -91,7 +73,7 @@ async def give_default_emoji_role(member):
         if role.name == default_emoji_name:
             # Future proofing
             if not role.permissions.administrator:
-                if not default_emoji_name:
+                if not default_role:
                     default_role = role
                 else:
                     print("More than one default emoji role found", file=sys.stderr)
@@ -102,3 +84,4 @@ async def give_default_emoji_role(member):
         return
 
     await member.add_roles(default_role, reason='joined server')
+
